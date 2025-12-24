@@ -13,5 +13,6 @@ module.exports = {
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
   BACKEND_BASE_URL: process.env.BACKEND_BASE_URL,
   FRONTEND_BASE_URL: process.env.FRONTEND_BASE_URL,
-  WEBHOOK_BASE_URL: process.env.WEBHOOK_BASE_URL
+  WEBHOOK_BASE_URL: process.env.WEBHOOK_BASE_URL,
+  NODE_ENV: process.env.NODE_ENV
 };

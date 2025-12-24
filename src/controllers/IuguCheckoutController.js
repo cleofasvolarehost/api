@@ -1,11 +1,12 @@
 const { supabase } = require('../config/supabase');
 const IuguService = require('../services/IuguService');
+const { NODE_ENV } = require('../config/env');
+
+const isTest = NODE_ENV !== 'production';
 
 class IuguCheckoutController {
   static async getAccount(req, res) {
     try {
-      // In a real multi-tenant scenario, we might fetch sub-account info.
-      // For now, return the main configured provider info or just success to confirm backend is ready.
       const { data } = await supabase
         .from('system_gateways')
         .select('provider, account_id, is_active')
@@ -28,41 +29,27 @@ class IuguCheckoutController {
       }
 
       const iugu = new IuguService();
-      // Use charge endpoint for direct checkout
       const chargeData = {
         email,
         items,
-        payer: { email }, // Simplified
+        payer: { email },
         method: 'pix',
-        test: true // TODO: env var
+        test: isTest
       };
 
       const result = await iugu.charge(chargeData);
 
-      // Extract Pix info
-      // Iugu returns invoice with pix info if method is pix
-      // structure varies, but usually invoice.pix.qrcode and qrcode_text
       if (result.errors) {
         return res.status(400).json({ success: false, message: 'Iugu Error', details: result.errors });
       }
 
-      const invoiceId = result.invoice_id || result.id;
-      // Fetch invoice details if needed, or use returned data
-      // For Pix, Iugu usually returns generated pix info in the response of charge or we need to fetch invoice
-      // Let's assume result has it or we fetch it.
-      // Actually, 'charge' endpoint returns the invoice object.
-      
-      // If it doesn't have pix data directly, we might need to look at 'pix' property
       const pixData = result.pix || {}; 
       
       return res.json({
         success: true,
         data: {
           pix_qrcode: pixData.qrcode_text,
-          pix: { qr_code_base64: pixData.qrcode }, // Iugu returns URL usually, but user asked for base64. 
-          // Note: Iugu returns qrcode (url) and qrcode_text (copy paste). 
-          // If user needs base64 image, we might need to generate it or Iugu provides it.
-          // Iugu 'qrcode' field is often a URL to an image.
+          pix: { qr_code_base64: pixData.qrcode }, 
           ticket_url: result.secure_url
         }
       });
@@ -86,13 +73,12 @@ class IuguCheckoutController {
         email,
         items,
         payer: { email },
-        test: true
+        test: isTest
       };
 
       const result = await iugu.charge(chargeData);
 
       if (result.errors) {
-         // Map common errors
          return res.status(400).json({ success: false, message: 'Payment Failed', details: result.errors });
       }
 

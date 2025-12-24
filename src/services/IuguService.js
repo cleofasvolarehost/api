@@ -27,6 +27,7 @@ function mapIuguError(err, fallbackMessage) {
 class IuguService {
   constructor() {
     this.baseUrl = 'https://api.iugu.com/v1';
+    this.isTest = process.env.NODE_ENV !== 'production';
   }
 
   async createCustomer(email, name, cpf) {
@@ -97,7 +98,7 @@ class IuguService {
     const body = {
       account_id: data.account_id,
       method: 'credit_card',
-      test: true, // Em produção, mudar conforme ambiente
+      test: data.test !== undefined ? data.test : this.isTest,
       data: {
         number: data.number,
         verification_value: data.cvv,
@@ -124,6 +125,14 @@ class IuguService {
   }
 
   async charge(data) {
+    // Inject test param if not present
+    /*if (data.test === undefined) {
+       // Note: charge endpoint doesn't strictly have a root 'test' param like payment_token,
+       // but payer info or custom variables might use it. 
+       // Actually Iugu uses the API Token (Test vs Live) to determine environment.
+       // However, for some operations like creating tokens, 'test: true' is explicit.
+    }*/
+    
     const res = await fetch(`${this.baseUrl}/charge`, {
       method: 'POST',
       headers: {
