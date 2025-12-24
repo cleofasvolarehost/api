@@ -32,7 +32,8 @@ module.exports = async (req, res) => {
 
   // 2. Pass to Express application
   try {
-    return await handler(req, res);
+    const result = await handler(req, res);
+    return result;
   } catch (error) {
     console.error('Unhandled Function Error:', error);
     // Ensure JSON response even on crash, with CORS headers already set
