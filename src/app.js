@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { ALLOWED_ORIGINS } = require('./config/env');
+const { ALLOWED_ORIGINS, FRONTEND_BASE_URL } = require('./config/env');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const iuguRoutes = require('./routes/iuguRoutes');
@@ -11,7 +11,12 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 app.set('trust proxy', 1);
 
-const origins = (ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+const defaultOrigins = ['https://www.crdev.app', 'https://crdev.app'];
+const configuredOrigins = [
+  ...(ALLOWED_ORIGINS || '').split(',').map((value) => value.trim()),
+  FRONTEND_BASE_URL
+].filter(Boolean);
+const origins = [...new Set([...defaultOrigins, ...configuredOrigins])];
 const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
   credentials: true
