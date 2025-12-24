@@ -43,8 +43,18 @@ async function testPostMissingToken() {
   process.env.IUGU_API_TOKEN = prev;
 }
 
+async function testPostMissingAmount() {
+  const req = {
+    method: 'POST',
+    headers: { origin: 'https://www.crdev.app', 'content-type': 'application/json' },
+    body: { email: 'test@example.com' }
+  };
+  const res = createMockRes();
+  await handler(req, res);
+}
+
 (async () => {
   await testOptions();
   await testPostMissingToken();
+  await testPostMissingAmount();
 })();
-
