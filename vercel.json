@@ -1,5 +1,7 @@
 {
+  "version": 2,
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.cjs" }
+    { "source": "/(.*)", "destination": "/api/index" },
+    { "source": "/health", "destination": "/api/health" }
   ]
 }
