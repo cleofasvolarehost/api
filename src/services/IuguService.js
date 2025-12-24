@@ -126,20 +126,15 @@ class IuguService {
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(mapIuguError(json, 'Falha ao tokenizar cartão'));
+      // Throw error but ensure it's caught gracefully upstream
+      const error = new Error(mapIuguError(json, 'Falha ao tokenizar cartão'));
+      error.details = json;
+      throw error;
     }
     return json;
   }
 
   async charge(data) {
-    // Inject test param if not present
-    /*if (data.test === undefined) {
-       // Note: charge endpoint doesn't strictly have a root 'test' param like payment_token,
-       // but payer info or custom variables might use it. 
-       // Actually Iugu uses the API Token (Test vs Live) to determine environment.
-       // However, for some operations like creating tokens, 'test: true' is explicit.
-    }*/
-    
     console.log('IuguService: Processing charge...');
     const res = await fetch(`${this.baseUrl}/charge`, {
       method: 'POST',
@@ -151,11 +146,15 @@ class IuguService {
       body: JSON.stringify(data),
     });
     const json = await res.json().catch(() => ({}));
+    
+    // Allow caller to handle non-200 responses if they contain 'errors'
+    // But return valid object structure to avoid crashes
     if (!res.ok) {
       console.error('IuguService: Charge failed', res.status, json);
-      throw new Error(mapIuguError(json, 'Falha ao processar cobrança'));
+      // Return the error response instead of throwing, to let controller handle it safely
+      return { errors: json.errors || 'Falha ao processar cobrança', success: false, ...json };
     }
-    return json;
+    return { success: true, ...json };
   }
 }
 
