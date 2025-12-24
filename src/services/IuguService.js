@@ -2,7 +2,10 @@ const fetch = require('node-fetch');
 const { IUGU_API_TOKEN } = require('../config/env');
 
 function getAuthHeader() {
-  if (!IUGU_API_TOKEN) throw new Error('Missing IUGU_API_TOKEN');
+  if (!IUGU_API_TOKEN) {
+    console.error('CRITICAL: IUGU_API_TOKEN is missing in environment variables.');
+    throw new Error('Missing IUGU_API_TOKEN');
+  }
   const base64 = Buffer.from(`${IUGU_API_TOKEN}:`).toString('base64');
   return `Basic ${base64}`;
 }
@@ -28,6 +31,10 @@ class IuguService {
   constructor() {
     this.baseUrl = 'https://api.iugu.com/v1';
     this.isTest = process.env.NODE_ENV !== 'production';
+    if (!IuguService.loggedTokenCheck) {
+      console.log(`IuguService initialized. Test Mode: ${this.isTest}. Token Present: ${!!IUGU_API_TOKEN}`);
+      IuguService.loggedTokenCheck = true;
+    }
   }
 
   async createCustomer(email, name, cpf) {
@@ -133,6 +140,7 @@ class IuguService {
        // However, for some operations like creating tokens, 'test: true' is explicit.
     }*/
     
+    console.log('IuguService: Processing charge...');
     const res = await fetch(`${this.baseUrl}/charge`, {
       method: 'POST',
       headers: {
@@ -144,6 +152,7 @@ class IuguService {
     });
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {
+      console.error('IuguService: Charge failed', res.status, json);
       throw new Error(mapIuguError(json, 'Falha ao processar cobrança'));
     }
     return json;
