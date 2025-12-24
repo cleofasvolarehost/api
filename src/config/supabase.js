@@ -1,8 +1,27 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://vkobtnufnijptgvvxrhq.supabase.co';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrb2J0bnVmbmlqcHRndnZ4cmhxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NjE3MDk2OSwiZXhwIjoyMDgxNzQ2OTY5fQ.45_wJKe39LTWUweyAGQ_ogEMiz7Si6Z2aXi8WU8RRuY';
+function isPlaceholder(value) {
+  return typeof value === 'string' && /^your_/i.test(value);
+}
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function isValidHttpUrl(value) {
+  return typeof value === 'string' && /^https?:\/\//i.test(value.trim());
+}
+
+const rawUrl = process.env.SUPABASE_URL;
+const rawKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!isValidHttpUrl(rawUrl) || isPlaceholder(rawUrl)) {
+  console.warn('Supabase URL is not configured correctly in environment variables.');
+}
+
+if (!rawKey || isPlaceholder(rawKey)) {
+  console.warn('Supabase Service Role Key is not configured correctly in environment variables.');
+}
+
+const supabaseUrl = rawUrl;
+const supabaseServiceKey = rawKey;
+
+const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseServiceKey || 'placeholder');
 
 module.exports = { supabase };
