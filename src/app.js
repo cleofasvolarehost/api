@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/subscriptions', subscriptionRoutes); // Alias for plural support
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/iugu', iuguRoutes);
 app.use('/api/assinaturas', assinaturaRoutes);
