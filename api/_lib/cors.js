@@ -5,7 +5,7 @@ module.exports = function setCors(req, res) {
   res.setHeader('Access-Control-Allow-Origin', use);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,HEAD,OPTIONS');
   if (req.method === 'OPTIONS') {
     res.status(200).send('');
     return true;

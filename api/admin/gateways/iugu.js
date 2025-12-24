@@ -1,8 +1,8 @@
 const setCors = require('../../_lib/cors');
 module.exports = async (req, res) => {
   if (setCors(req, res)) return;
-  if (req.method === 'GET') {
-    res.status(200).json({ message: 'ok' });
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    res.status(200).json({ message: 'ok', ok: true });
     return;
   }
   if (req.method !== 'POST') {
@@ -14,5 +14,5 @@ module.exports = async (req, res) => {
     res.status(401).json({ error: 'unauthorized' });
     return;
   }
-  res.status(200).json({ message: 'salvas' });
+  res.status(200).json({ message: 'salvas', ok: true });
 };
