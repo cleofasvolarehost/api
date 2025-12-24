@@ -30,7 +30,7 @@ class IuguService {
   }
 
   async createCustomer(email, name, cpf) {
-    const body = { email, name, cpf }; 
+    const body = { email, name, cpf_cnpj: cpf }; 
     const res = await fetch(`${this.baseUrl}/customers`, {
       method: 'POST',
       headers: {
@@ -52,7 +52,7 @@ class IuguService {
   }
 
   async createSubscription(customerId, planId) {
-    const body = { customer_id: customerId, plan_id: planId, plan_identifier: planId };
+    const body = { customer_id: customerId, plan_identifier: planId };
     const res = await fetch(`${this.baseUrl}/subscriptions`, {
       method: 'POST',
       headers: {
@@ -89,6 +89,53 @@ class IuguService {
       error.status = res.status;
       error.details = json;
       throw error;
+    }
+    return json;
+  }
+
+  async createPaymentToken(data) {
+    const body = {
+      account_id: data.account_id,
+      method: 'credit_card',
+      test: true, // Em produção, mudar conforme ambiente
+      data: {
+        number: data.number,
+        verification_value: data.cvv,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        month: data.month,
+        year: data.year,
+      },
+    };
+    const res = await fetch(`${this.baseUrl}/payment_token`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: getAuthHeader(),
+      },
+      body: JSON.stringify(body),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(mapIuguError(json, 'Falha ao tokenizar cartão'));
+    }
+    return json;
+  }
+
+  async charge(data) {
+    const res = await fetch(`${this.baseUrl}/charge`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: getAuthHeader(),
+      },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(mapIuguError(json, 'Falha ao processar cobrança'));
     }
     return json;
   }

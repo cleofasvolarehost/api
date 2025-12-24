@@ -1,4 +1,4 @@
-const supabase = require('../config/supabase');
+const supabase = require('../config/supabase').supabase;
 
 async function sendDunningMessage(establishmentId, phone, message) {
   if (!phone) return;
@@ -117,7 +117,6 @@ class IuguWebhookController {
         .eq('id', sub.user_id)
         .maybeSingle();
       phone = user?.telefone || null;
-      establishment_id = user?.establishment_id || establishment_id;
     }
 
     await sendDunningMessage(establishment_id || sub.establishment_id, phone, 'Seu pagamento não foi aprovado. Vamos tentar novamente. Evite bloqueio do acesso.');
@@ -174,4 +173,3 @@ class IuguWebhookController {
 }
 
 module.exports = IuguWebhookController;
-
