@@ -31,7 +31,7 @@ module.exports = {
         p_secret_key: SYSTEM_GATEWAY_ENCRYPTION_KEY,
       });
       if (error) throw error;
-      return res.json({ success: true, data });
+      return res.json({ success: true, ok: true, message: 'salvas', data });
     } catch (err) {
       console.error('saveIugu error', err);
       return res.status(500).json({ success: false, mensagem: 'Falha ao salvar credenciais do Iugu' });
@@ -49,7 +49,7 @@ module.exports = {
         .eq('provider', 'iugu')
         .maybeSingle();
       if (error) throw error;
-      return res.json({ success: true, data });
+      return res.json({ success: true, ok: true, message: 'ok', data });
     } catch (err) {
       console.error('getIugu error', err);
       return res.status(500).json({ success: false, mensagem: 'Falha ao obter credenciais do Iugu' });
@@ -71,7 +71,7 @@ module.exports = {
         .from('system_gateways')
         .upsert({ provider, is_active: true }, { onConflict: 'provider' });
       if (e2) throw e2;
-      return res.json({ success: true });
+      return res.json({ success: true, ok: true, message: 'ativado' });
     } catch (err) {
       console.error('activateProvider error', err);
       return res.status(500).json({ success: false, mensagem: 'Falha ao ativar provider' });
