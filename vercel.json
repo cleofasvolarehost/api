@@ -1,8 +1,10 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/health", "destination": "/api/health" },
-    { "source": "/(.*)", "destination": "/api/index" }
+    { "source": "/api/iugu/checkout/pix", "destination": "/api/iugu/checkout/pix.js" },
+    { "source": "/api/iugu/checkout/card", "destination": "/api/iugu/checkout/card.js" },
+    { "source": "/health", "destination": "/api/health.js" },
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ],
   "headers": [
     {
