@@ -1,4 +1,4 @@
-const setCors = require('../../_lib/cors');
+const setCors = require('../_lib/cors');
 module.exports = async (req, res) => {
   if (setCors(req, res)) return;
   if (req.method !== 'POST') {
