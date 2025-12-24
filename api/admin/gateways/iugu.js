@@ -1,6 +1,10 @@
 const setCors = require('../../_lib/cors');
 module.exports = async (req, res) => {
   if (setCors(req, res)) return;
+  if (req.method === 'GET') {
+    res.status(200).json({ message: 'ok' });
+    return;
+  }
   if (req.method !== 'POST') {
     res.status(405).send('');
     return;
