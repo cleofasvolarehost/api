@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://www.crdev.app');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
