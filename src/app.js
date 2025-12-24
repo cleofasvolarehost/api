@@ -6,6 +6,7 @@ const webhookRoutes = require('./routes/webhookRoutes');
 const iuguRoutes = require('./routes/iuguRoutes');
 const assinaturaRoutes = require('./routes/assinaturas');
 const adminGatewayRoutes = require('./routes/adminGatewayRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -30,6 +31,7 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/iugu', iuguRoutes);
 app.use('/api/assinaturas', assinaturaRoutes);
 app.use('/api/admin/gateways', adminGatewayRoutes);
+app.use('/api/payment', paymentRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'barbearia-backend', uptime: process.uptime() });
